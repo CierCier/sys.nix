@@ -1,0 +1,14 @@
+
+[SddmGreeterTheme]
+Name=Rhine Labs
+Type=sddm-theme
+Description=Rhine Labs Synthesis Information Analysis OS
+License=GPL-3.0-or-later
+Version=1.0
+Theme-Id=rhine-labs
+Theme-API=2.0
+MainScript=Main.qml
+TranslationsDirectory=translations
+QtVersion=6
+
+ConfigFile=theme.conf
