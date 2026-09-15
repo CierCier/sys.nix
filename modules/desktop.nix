@@ -66,6 +66,7 @@ in
 	  whitesur-gtk-theme
 	  rose-pine-icon-theme
       appimage-run
+      inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default
     ])
     ++ [
       rhine-labs-theme

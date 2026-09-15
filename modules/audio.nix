@@ -44,6 +44,26 @@
         }
       ];
     };
+    # Audiocular Spark (TTGK 3302:33a7): stereo USB DAC, PCM up to 384 kHz.
+    # Altsets: S16_LE / S24_3LE / S32_LE x 2ch @ 8k-384k (verified via
+    # /proc/asound/Spark/stream0). Mono mic capture up to 96 kHz.
+    # S32_LE container, default 384 kHz; 44.1k/48k/96k/192k pass natively.
+    wireplumber.extraConfig."92-audiocular-spark" = {
+      "monitor.alsa.rules" = [
+        {
+          matches = [
+            { "device.name" = "~alsa_card.usb-TTGK_Technology_Co._Ltd_Audiocular_Spark-00"; }
+          ];
+          actions = {
+            "update-props" = {
+              "audio.format" = "S32_LE";
+              "audio.rate" = [ 384000 ];
+              "audio.allowed-rates" = [ 44100 48000 96000 192000 384000 ];
+            };
+          };
+        }
+      ];
+    };
   };
 
   # Real-time scheduling for audio (prevents crackles/dropouts)

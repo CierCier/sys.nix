@@ -14,6 +14,7 @@
     ../../modules/hardware/nvidia.nix
     ../../modules/gaming.nix
     ../../modules/audio.nix
+    ../../modules/quickshell.nix
     ../../modules/system.nix
   ];
 

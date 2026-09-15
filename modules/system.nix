@@ -42,6 +42,11 @@ in
     };
   };
 
+  boot.tmp = {
+    useTmpfs = true;
+    cleanOnBoot = true;
+  };
+
   security.polkit.extraConfig = ''
     polkit.addRule(function(action, subject) {
       if (action.id == "org.freedesktop.login1.hibernate" ||

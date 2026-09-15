@@ -22,6 +22,7 @@
     ripgrep
     fd
     bat
+	superfile
     zoxide
     rmpc
     matugen
