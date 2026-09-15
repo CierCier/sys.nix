@@ -1,29 +1,23 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
-  environment.systemPackages =
-    (with pkgs; [
-      adwaita-icon-theme
-      rose-pine-cursor
-    ])
-    ++ [
-      pkgs.ibm-plex
-    ];
+  environment.systemPackages = with pkgs; [
+    adwaita-icon-theme
+    rose-pine-cursor
+    ibm-plex
+  ];
 
   fonts = {
     enableDefaultPackages = true;
-    packages =
-      (with pkgs; [
-        inter
-        noto-fonts
-        noto-fonts-color-emoji
-        nerd-fonts.jetbrains-mono
-        jetbrains-mono
-        material-symbols
-      ])
-      ++ [
-        pkgs.ibm-plex
-      ];
+    packages = with pkgs; [
+      inter
+      noto-fonts
+      noto-fonts-color-emoji
+      nerd-fonts.jetbrains-mono
+      jetbrains-mono
+      material-symbols
+      ibm-plex
+    ];
   };
 
   environment.sessionVariables = {

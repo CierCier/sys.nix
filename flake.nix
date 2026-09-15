@@ -45,9 +45,12 @@
       quickshell,
       ...
     }@inputs:
+    let
+      system = "x86_64-linux";
+    in
     {
       nixosConfigurations.oilrig = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
+        inherit system;
         specialArgs = { inherit inputs; };
         modules = [
           inputs.hyprland.nixosModules.default
@@ -55,7 +58,7 @@
           ({ pkgs, ... }: {
             nixpkgs.overlays = [
               (final: prev: {
-                llvmPackages_22 = nixpkgs-unstable.legacyPackages.x86_64-linux.llvmPackages_22;
+                llvmPackages_22 = nixpkgs-unstable.legacyPackages.${system}.llvmPackages_22;
               })
             ];
           })
@@ -63,6 +66,6 @@
       };
       # compat alias for /etc/nixos#nixos
       nixosConfigurations.nixos = self.nixosConfigurations.oilrig;
-      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt;
+      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt;
     };
 }
