@@ -22,6 +22,7 @@
     ripgrep
     fd
     bat
+	tree
 	superfile
     zoxide
     rmpc
@@ -46,7 +47,6 @@
     qbittorrent
 
     ffmpeg
-
     (python3.withPackages (
       ps: with ps; [
         python-ffmpeg
@@ -54,6 +54,8 @@
 		uv
       ]
     ))
+
+	icu # needed for some libs
   ];
 
   services.flatpak.enable = true;

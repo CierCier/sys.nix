@@ -247,6 +247,8 @@ in
   programs.nix-ld.enable = true;
   systemd.tmpfiles.rules = [
     "L+ /lib/ld-musl-x86_64.so.1 - - - - ${pkgs.musl}/lib/ld-musl-x86_64.so.1"
+    "L+ /bin/bash - - - - ${pkgs.bash}/bin/bash"
+    "L+ /sbin/ldconfig - - - - ${compat.ldconfig-wrapper}/bin/ldconfig"
   ];
   programs.nix-ld.libraries =
     (with pkgs; [
@@ -313,7 +315,7 @@ in
       portaudio
     ])
     ++ [
-      config.boot.kernelPackages.nvidiaPackages.stable
+      config.hardware.nvidia.package
     ];
 
   programs.direnv = {

@@ -7,6 +7,11 @@
 
 let
   rhine-labs-theme = pkgs.callPackage ./sddm-theme.nix { };
+  # StabilityMatrix (.NET 9) can't use the ICU 78 in the default FHS,
+  # provide ICU 76 (pkgs.icu) alongside it.
+  appimage-run-icu = pkgs.appimage-run.override {
+    extraPkgs = pkgs: [ pkgs.icu ];
+  };
 in
 {
   environment.systemPackages =
@@ -65,17 +70,18 @@ in
 	  portaudio
 	  whitesur-gtk-theme
 	  rose-pine-icon-theme
-      appimage-run
-      inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default
+      # inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default
     ])
     ++ [
       rhine-labs-theme
+      appimage-run-icu
       # inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.csgo-vulkan-fix # disabled - see below
     ];
 
   programs.appimage = {
     enable = true;
     binfmt = true;
+    package = appimage-run-icu;
   };
 
   programs.hyprland.enable = true;
