@@ -4,7 +4,6 @@
   environment.systemPackages = with pkgs; [
     adwaita-icon-theme
     rose-pine-cursor
-    ibm-plex
   ];
 
   fonts = {

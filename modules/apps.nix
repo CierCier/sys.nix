@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   inputs,
   ...
@@ -9,21 +8,21 @@
   environment.systemPackages = with pkgs; [
     inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default
     chromium
-	mpv
+    mpv
     imv
     obs-studio
     discord
     jq
     unzip
     p7zip
-	rar
+    rar
     localsend
     fzf
     ripgrep
     fd
     bat
-	tree
-	superfile
+    tree
+    superfile
     zoxide
     rmpc
     matugen
@@ -31,7 +30,6 @@
     tmux
     fastfetch
     zed-editor
-    android-tools
     scrcpy
     usbutils
     pciutils
@@ -51,11 +49,11 @@
       ps: with ps; [
         python-ffmpeg
         rich
-		uv
+        uv
       ]
     ))
 
-	icu # needed for some libs
+    icu # needed for some libs
   ];
 
   services.flatpak.enable = true;

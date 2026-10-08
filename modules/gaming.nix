@@ -17,15 +17,12 @@
     settings = {
       general = {
         renice = 10;
+        desiredgov = "performance";
       };
       gpu = {
         apply_gpu_optimisations = "accept-responsibility";
         gpu_device = 1;
         nv_powermizer_mode = 1;
-      };
-      cpu = {
-        governor = "performance";
-        energy_performance_preference = "performance";
       };
     };
   };
@@ -52,5 +49,10 @@
   services.asusd = {
     enable = true;
   };
+  # ASUS GPU mux control (provides supergfxctl). Pairs with asusd;
+  # replaces power-profiles-daemon for platform_profile ownership.
+  # Mostly-plugged-in: `supergfxctl -m Hybrid` (iGPU daily, dGPU on demand
+  # via offload) or `-m Dedicated` for max FPS at cost of power.
+  services.supergfxd.enable = true;
 
 }

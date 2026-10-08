@@ -25,20 +25,22 @@
       };
     };
 
-    # Vault Ai22 USB interface: run playback at 24-bit, defaulting to 96 kHz.
-    # Device-only rule, so the graph clock stays compliant; 44.1/48 kHz streams
-    # pass through natively, anything else is resampled to the nearest allowed rate.
+    # Vault Ai22 playback: 24-bit at 96 kHz, resampling other stream rates.
     wireplumber.extraConfig."91-vault-ai22" = {
       "monitor.alsa.rules" = [
         {
           matches = [
-            { "device.name" = "~alsa_card.usb-Vault_Vault_Ai22-01"; }
+            { "node.name" = "~alsa_output[.]usb-Vault_Vault_Ai22-01[.].*"; }
           ];
           actions = {
             "update-props" = {
               "audio.format" = "S24_3LE";
-              "audio.rate" = [ 96000 ];
-              "audio.allowed-rates" = [ 44100 48000 96000 ];
+              "audio.rate" = 96000;
+              "audio.allowed-rates" = [
+                44100
+                48000
+                96000
+              ];
             };
           };
         }
@@ -47,18 +49,23 @@
     # Audiocular Spark (TTGK 3302:33a7): stereo USB DAC, PCM up to 384 kHz.
     # Altsets: S16_LE / S24_3LE / S32_LE x 2ch @ 8k-384k (verified via
     # /proc/asound/Spark/stream0). Mono mic capture up to 96 kHz.
-    # S32_LE container, default 384 kHz; 44.1k/48k/96k/192k pass natively.
+    # Playback uses an S32_LE container at 384 kHz, resampling other stream rates.
     wireplumber.extraConfig."92-audiocular-spark" = {
       "monitor.alsa.rules" = [
         {
           matches = [
-            { "device.name" = "~alsa_card.usb-TTGK_Technology_Co._Ltd_Audiocular_Spark-00"; }
+            { "node.name" = "~alsa_output[.]usb-TTGK_Technology_Co[.]_Ltd_Audiocular_Spark-00[.].*"; }
           ];
           actions = {
             "update-props" = {
               "audio.format" = "S32_LE";
-              "audio.rate" = [ 384000 ];
-              "audio.allowed-rates" = [ 44100 48000 96000 192000 384000 ];
+              "audio.allowed-rates" = [
+                44100
+                48000
+                96000
+                192000
+                384000
+              ];
             };
           };
         }

@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  inputs,
   ...
 }:
 
@@ -49,6 +48,9 @@ in
 
   security.polkit.extraConfig = ''
     polkit.addRule(function(action, subject) {
+      if (!subject.local || !subject.active || subject.user != "cier") {
+        return;
+      }
       if (action.id == "org.freedesktop.login1.hibernate" ||
           action.id == "org.freedesktop.login1.hibernate-multiple-sessions" ||
           action.id == "org.freedesktop.login1.hibernate-ignore-inhibit") {
@@ -162,12 +164,13 @@ in
     gh
     curl
     btop-cuda
+    bubblewrap
     patchelf
     compat.ldconfig-wrapper
     keyd
-	android-tools
-	postgresql
-	distrobox
+    android-tools
+    postgresql
+    distrobox
   ];
 
   environment.sessionVariables = {
@@ -185,7 +188,23 @@ in
     enableSSHSupport = true;
   };
   programs.coolercontrol.enable = true;
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    settings = {
+      PermitRootLogin = "no";
+      # Kept on per your choice: no ~/.ssh/authorized_keys exists yet,
+      # so key-only would lock you out. Flip to false after adding a key.
+      PasswordAuthentication = true;
+      KbdInteractiveAuthentication = false;
+      X11Forwarding = false;
+      MaxAuthTries = 3;
+      LoginGraceTime = "30s";
+      MaxSessions = 2;
+      AllowUsers = [ "cier" ];
+    };
+  };
+  # Brute-force protection for SSH (default sshd jail, auto sets LogLevel VERBOSE)
+  services.fail2ban.enable = true;
 
   services.logind.settings = {
     Login = {
@@ -210,9 +229,34 @@ in
 
   services.cloudflare-warp.enable = true;
 
-  services.tailscale.enable = true;
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
+  };
+  # Required for Tailscale: strict RPF breaks WireGuard peer paths
+  networking.firewall.checkReversePath = "loose";
+  # SMART monitoring (autodetect covers nvme0n1)
+  services.smartd.enable = true;
+  # Monthly btrfs scrub on all btrfs mounts (/, /home, /nix share device)
+  services.btrfs.autoScrub.enable = true;
+  # Local rollback only (no off-disk backup yet): hourly snapshots of /home,
+  # keep 10 hourly / 10 daily / 4 weekly. / is top-level subvol so only /home
+  # gets snapper for now; add restic to USB/cloud later for real backup.
+  services.snapper.configs.home = {
+    SUBVOLUME = "/home";
+    ALLOW_USERS = [ "cier" ];
+    TIMELINE_CREATE = true;
+    TIMELINE_CLEANUP = true;
+    TIMELINE_LIMIT_HOURLY = 4;
+    TIMELINE_LIMIT_DAILY = 2;
+    TIMELINE_LIMIT_WEEKLY = 1;
+    TIMELINE_LIMIT_MONTHLY = 0;
+    TIMELINE_LIMIT_YEARLY = 0;
+  };
   virtualisation.docker.enable = true;
-  virtualisation.waydroid.enable = true;
+  # Was enabled but never initialized (`waydroid status` uninitialized);
+  # disabled per your call to save resources. Re-enable + `waydroid init` if needed.
+  virtualisation.waydroid.enable = false;
 
   services.printing = {
     enable = true;
@@ -239,7 +283,6 @@ in
   ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
-
 
   # postgresql services
   services.postgresql.enable = true;
@@ -303,7 +346,7 @@ in
       json-glib
       libadwaita
       libxcrypt
-      compat.libcrypt-compat
+      libxcrypt-legacy
       libgbm
       atk
       at-spi2-core
@@ -335,7 +378,6 @@ in
     automatic = true;
     dates = [ "03:00" ];
   };
-
 
   # Prevent Intel I2C controller (touchpad) from entering runtime suspend
   # Fixes "i2c_designware controller timed out" on ASUS Vivobook 16 V3607VU

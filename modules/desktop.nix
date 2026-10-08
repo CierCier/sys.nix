@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   inputs,
   ...
@@ -7,8 +6,6 @@
 
 let
   rhine-labs-theme = pkgs.callPackage ./sddm-theme.nix { };
-  # StabilityMatrix (.NET 9) can't use the ICU 78 in the default FHS,
-  # provide ICU 76 (pkgs.icu) alongside it.
   appimage-run-icu = pkgs.appimage-run.override {
     extraPkgs = pkgs: [ pkgs.icu ];
   };
@@ -38,14 +35,13 @@ in
       kdePackages.qt6ct
       rose-pine-hyprcursor
       polkit_gnome
-      material-symbols
 
-	  ntfs3g
+      ntfs3g
       exfat
       dosfstools
       btrfs-progs
 
-	  udiskie
+      udiskie
       hypridle
       kdePackages.qtstyleplugin-kvantum
       fcitx5
@@ -67,9 +63,9 @@ in
       # hyprlandPlugins.csgo-vulkan-fix  # replaced by flake version below
       gtk4
       glib
-	  portaudio
-	  whitesur-gtk-theme
-	  rose-pine-icon-theme
+      portaudio
+      whitesur-gtk-theme
+      rose-pine-icon-theme
       # inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default
     ])
     ++ [
@@ -94,7 +90,10 @@ in
   #   "${inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.csgo-vulkan-fix}/lib/libcsgo-vulkan-fix.so";
 
   services.upower.enable = true;
-  services.power-profiles-daemon.enable = true;
+  # Disabled: conflicts with asusd on ASUS laptops (both claim platform_profile).
+  # asusd + supergfxd own performance/power; upower stays for battery/suspend signals.
+  # Mostly-plugged-in case: asusctl profile set to Performance, see gaming.nix.
+  services.power-profiles-daemon.enable = false;
   services.gnome.gnome-keyring.enable = true;
 
   services.displayManager.sddm = {
@@ -106,6 +105,12 @@ in
       pkgs.qt6.qtmultimedia
       pkgs.qt6.qt5compat
       pkgs.qt6.qtvirtualkeyboard
+    ];
+  };
+  xdg.portal = {
+    enable = true;
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
     ];
   };
 
@@ -123,10 +128,6 @@ in
       Restart = "always";
       RestartSec = 3;
       TimeoutStopSec = 10;
-    };
-    environment = {
-      GDK_BACKEND = "wayland";
-      WAYLAND_DISPLAY = "wayland-1";
     };
   };
 
