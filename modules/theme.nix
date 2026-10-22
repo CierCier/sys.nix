@@ -13,6 +13,7 @@
       noto-fonts
       noto-fonts-color-emoji
       nerd-fonts.jetbrains-mono
+	  nerd-fonts.im-writing
       jetbrains-mono
       material-symbols
       ibm-plex

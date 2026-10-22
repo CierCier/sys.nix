@@ -5,11 +5,12 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
-    hyprland.url = "github:hyprwm/Hyprland";
+    hyprland = {
+		url = "github:hyprwm/Hyprland";
+	};
 
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
     };
 
     noctalia = {
@@ -23,11 +24,15 @@
     };
 
     quickshell = {
-      # add ?ref=<tag> to track a tag
       url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
-
-      # THIS IS IMPORTANT
-      # Mismatched system dependencies will lead to crashes and other issues.
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    tg = {
+      url = "git+https://tangled.org/aly.codes/tg";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v1.2.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -43,6 +48,7 @@
       noctalia,
       herdr,
       quickshell,
+      tg,
       ...
     }@inputs:
     let
@@ -53,6 +59,7 @@
         inherit system;
         specialArgs = { inherit inputs; };
         modules = [
+          inputs.lanzaboote.nixosModules.lanzaboote
           inputs.hyprland.nixosModules.default
           ./hosts/oilrig
           ({ pkgs, ... }: {
@@ -69,3 +76,4 @@
       formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt;
     };
 }
+

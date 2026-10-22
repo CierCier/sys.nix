@@ -13,6 +13,9 @@ in
 {
   environment.systemPackages =
     (with pkgs; [
+	  swayfx
+
+
       kitty
       grim
       slurp
@@ -23,6 +26,7 @@ in
       clipse
       wl-clipboard
       inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
+      inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default
       thunar
       thunar-archive-plugin
       thunar-volman
@@ -66,12 +70,10 @@ in
       portaudio
       whitesur-gtk-theme
       rose-pine-icon-theme
-      # inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default
     ])
     ++ [
       rhine-labs-theme
       appimage-run-icu
-      # inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.csgo-vulkan-fix # disabled - see below
     ];
 
   programs.appimage = {
@@ -80,14 +82,13 @@ in
     package = appimage-run-icu;
   };
 
-  programs.hyprland.enable = true;
+
+  programs.hyprland = {
+    enable = true;
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+  };
   services.desktopManager.plasma6.enable = true;
   services.displayManager.defaultSession = "hyprland";
-  # csgo-vulkan-fix disabled: upstream Hyprland git moved Window.hpp (hyprland/src/desktop/view/window/Window.hpp)
-  # plugin built against flake hyprland fails until hyprland-plugins catches up
-  # TODO: re-enable when hyprland-plugins updates
-  # environment.etc."hypr/plugins/csgo-vulkan-fix.so".source =
-  #   "${inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.csgo-vulkan-fix}/lib/libcsgo-vulkan-fix.so";
 
   services.upower.enable = true;
   # Disabled: conflicts with asusd on ASUS laptops (both claim platform_profile).

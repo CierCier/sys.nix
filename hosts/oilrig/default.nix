@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/desktop.nix
+    ../../modules/ocr.nix
     ../../modules/theme.nix
     ../../modules/apps.nix
     ../../modules/hardware/nvidia.nix

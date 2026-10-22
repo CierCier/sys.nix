@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }:
@@ -10,11 +11,16 @@ in
 {
   # Bootloader.
   boot.loader.systemd-boot = {
-    enable = true;
+    enable = lib.mkForce false;
     consoleMode = "max";
     configurationLimit = 15;
   };
   boot.loader.efi.canTouchEfiVariables = true;
+
+  boot.lanzaboote = {
+    enable = true;
+    pkiBundle = "/var/lib/sbctl";
+  };
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_zen;
@@ -130,9 +136,23 @@ in
       "keyd"
       "adbusers"
       "cups"
+      "libvirtd"
+      "kvm"
     ];
     shell = pkgs.fish;
   };
+
+  # KVM/libvirt provides hardware-accelerated guests; virtio devices and host
+  # CPU passthrough are selected per VM in virt-manager.
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu = {
+      package = pkgs.qemu_kvm;
+      swtpm.enable = true;
+      vhostUserPackages = [ pkgs.virtiofsd ];
+    };
+  };
+  virtualisation.spiceUSBRedirection.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
